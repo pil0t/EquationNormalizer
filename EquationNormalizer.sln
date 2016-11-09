@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EquationNormalizer", "EquationNormalizer\EquationNormalizer.csproj", "{EBD4C39C-DDFD-4FAC-B077-FB19FDEF0A9F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EquationNormalizer.Tests", "EquationNormalizer.Tests\EquationNormalizer.Tests.csproj", "{863B17A6-1C9A-4C4E-A958-B5C2E1532EE2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{EBD4C39C-DDFD-4FAC-B077-FB19FDEF0A9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EBD4C39C-DDFD-4FAC-B077-FB19FDEF0A9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EBD4C39C-DDFD-4FAC-B077-FB19FDEF0A9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{863B17A6-1C9A-4C4E-A958-B5C2E1532EE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{863B17A6-1C9A-4C4E-A958-B5C2E1532EE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{863B17A6-1C9A-4C4E-A958-B5C2E1532EE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{863B17A6-1C9A-4C4E-A958-B5C2E1532EE2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

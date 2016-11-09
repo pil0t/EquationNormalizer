@@ -5,40 +5,19 @@ namespace EquationNormalizer
 {
     public class Parser
     {
-        public Equation Parse(string source)
+        public static Equation Parse(string source)
         {
-            var splitted = RemoveWhitespace(source).Split('=');
+            var splitted = source.RemoveWhitespace().Split('=');
             if (splitted.Length < 2) throw new ParseException("Уравнение должно содержать знак '='");
             if (splitted.Length > 2) throw new ParseException("Уравнение должно содержать только один знак '='");
 
             var left = splitted[0];
             var right = splitted[1];
-            var equation = new Equation() {Left = ParseSide(left), Right = ParseSide(right)};
+            var equation = new Equation() { Left = ParseSide(left), Right = ParseSide(right) };
             return equation;
         }
 
-        private static string RemoveWhitespace(string input)
-        {
-            return string.Join("", input.Split(default(string[]), StringSplitOptions.RemoveEmptyEntries));
-        }
-
-        private int ParseInt(string source, ref int position)
-        {
-            char c;
-            c = source[position];
-            var cl = new List<char>();
-            while (char.IsDigit(c))
-            {
-                cl.Add(c);
-                position++;
-                if (position >= source.Length)
-                    break;
-                c = source[position];
-            }
-            position--;
-            return int.Parse(new string(cl.ToArray()));
-        }
-        private double ParseDouble(string source, ref int position)
+        private static TNumber ParseNumber<TNumber>(string source, Func<string, TNumber> parser, ref int position)
         {
             char c;
             c = source[position];
@@ -52,17 +31,19 @@ namespace EquationNormalizer
                 c = source[position];
             }
             position--;
-            return double.Parse(new string(cl.ToArray()));
+            return parser(new string(cl.ToArray()));
         }
 
-        private List<Summand> ParseSide(string source)
+        private static List<Summand> ParseSide(string source)
         {
+            var parstack = new Stack<int>();
             var result = new List<Summand>();
-            var currSummand = new Summand() {K = 1};
+            var currSummand = new Summand() { K = 1 };
             double curNum = 0;
             Variable currVariable = null;
             int pos = 0;
             bool inPower = false;
+            parstack.Push(1);
             while (pos < source.Length)
             {
                 var c = source[pos];
@@ -77,22 +58,38 @@ namespace EquationNormalizer
                 {
                     if (inPower)
                     {
-                        currVariable.Power = ParseInt(source, ref pos);
+                        currVariable.Power = ParseNumber(source, int.Parse, ref pos);
                     }
                     else
                     {
-                        currSummand.K = currSummand.K * ParseDouble(source, ref pos);
+                        currSummand.K = currSummand.K * ParseNumber(source, double.Parse, ref pos);
                     }
                 }
                 else if (c == '+' || c == '-')
                 {
-                    if(pos >0)
+                    if (pos > 0)
                         result.Add(currSummand);
-                    currSummand = new Summand() {K = c == '+' ? 1 : -1};
+                    var mult = parstack.Peek();
+                    currSummand = new Summand() { K = c == '+' ? mult : -mult };
                 }
                 else if (c == '^')
                 {
                     inPower = true;
+                }
+                else if (c == '(')
+                {
+                    var mult = parstack.Peek();
+                    if (pos != 0 && source[pos - 1] == '-')
+                    {
+                        mult = -mult;
+                    }
+
+                    parstack.Push(mult);
+                }
+                else if (c == ')')
+                {
+                    if (parstack.Count == 1) throw new ParseException("Скобки не сбалансированы!");
+                    parstack.Pop();
                 }
                 else if (char.IsLetter(c))
                 {
@@ -107,6 +104,7 @@ namespace EquationNormalizer
                 pos++;
             }
 
+            if (parstack.Count > 1) throw new ParseException("Скобки не сбалансированы!");
             result.Add(currSummand);
             return result;
         }

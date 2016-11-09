@@ -33,3 +33,4 @@ packages/
 *.exe
 *.out
 *.app
+*.user
